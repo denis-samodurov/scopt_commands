@@ -1,6 +1,7 @@
 package ru.denis
 
 sealed trait Command
+case class CommandNone() extends Command
 case class Command1(foo: Int, bar: String) extends Command
 case class Command2(baz: Boolean, qux: Double) extends Command
 
@@ -16,6 +17,7 @@ object MyApp extends App {
 
       // Определение параметров для Command1
       cmd("command1")
+        .action((_, _) => Command1(0, ""))
         .children(
           opt[Int]('f', "foo")
             .required()
@@ -29,6 +31,7 @@ object MyApp extends App {
 
       // Определение параметров для Command2
       cmd("command2")
+        .action((_, _) => Command2(false, 0))
         .children(
           opt[Boolean]('z', "baz")
             .required()
@@ -41,7 +44,7 @@ object MyApp extends App {
         )
     }
 
-    parser.parse(args, defaultCommand) match {
+    parser.parse(args, CommandNone()) match {
       case Some(command: Command1) =>
         // Логика для выполнения Command1
         println(s"Command1: foo=${command.foo}, bar=${command.bar}")
